@@ -125,7 +125,7 @@
     <h2>Get In Touch</h2>
     <p>Request a consultation</p>
 
-    <form id="contactForm">
+    <form id="contactForm" action="https://formspree.io/f/mwvwokaz" method="POST">
       <div class="form-group">
         <label for="name">Full Name</label>
         <input type="text" id="name" placeholder="Jane Smith" required />
@@ -140,7 +140,7 @@
       </div>
       <div class="form-group">
         <label for="message">Message</label>
-        <textarea id="message" placeholder="Tell us about your appraisal needs..." required></textarea>
+        <textarea id="message" placeholder="Please let us know how we may assist your needs..." required></textarea>
       </div>
       <button type="submit" id="submitBtn">Send Message</button>
     </form>
@@ -165,18 +165,32 @@
   </a>
 
   <script>
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const btn = document.getElementById('submitBtn');
-      btn.textContent = 'Message Sent ✓';
-      btn.classList.add('sent');
+      btn.textContent = 'Sending...';
       btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = 'Send Message';
-        btn.classList.remove('sent');
-        btn.disabled = false;
+
+      const data = new FormData(this);
+      const response = await fetch('https://formspree.io/f/mwvwokaz', {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        btn.textContent = 'Message Sent ✓';
+        btn.classList.add('sent');
         this.reset();
-      }, 3000);
+        setTimeout(() => {
+          btn.textContent = 'Send Message';
+          btn.classList.remove('sent');
+          btn.disabled = false;
+        }, 3000);
+      } else {
+        btn.textContent = 'Something went wrong — try again';
+        btn.disabled = false;
+      }
     });
   </script>
 
